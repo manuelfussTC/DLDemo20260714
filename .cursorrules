@@ -13,8 +13,8 @@
 - Öffentliche Kunden-URL: `https://demo.digitalleute.manuel-fuss.de`.
 - Alle Remote-Schritte müssen als einzelne, nicht-interaktive SSH-One-Shot-Befehle erfolgen.
 - Deployment erfolgt ausschließlich aus einem Git-Checkout; niemals per SCP, rsync oder manuellem Upload.
-- Zielstruktur: Checkout unter `/var/www/notiz-aufgaben`, Server-Env außerhalb des Repositories unter `/etc/notiz-aufgaben.env`, Systemd-Service `notiz-aufgaben.service`, Nginx-Site `/etc/nginx/sites-available/demo.digitalleute.manuel-fuss.de`.
+- Zielstruktur: Checkout unter `/var/www/notiz-aufgaben`, lokale Server-Env ausschließlich als `/var/www/notiz-aufgaben/.env` mit `chmod 600`, Systemd-Service `notiz-aufgaben.service`, Nginx-Site `/etc/nginx/sites-available/demo.digitalleute.manuel-fuss.de`.
 - Der Node-Prozess bindet nur an `127.0.0.1:3107`; Nginx ist der alleinige öffentliche Einstiegspunkt und proxyed `/` sowie `/api/`.
-- Nginx muss Dotfiles einschließlich `.env` sperren. Die Env-Datei gehört nie in den Deployment-Pfad.
+- Nginx muss Dotfiles einschließlich `.env` sperren. Die Env-Datei wird niemals gelesen, kopiert, geloggt oder versioniert.
 - TLS erfolgt über Certbot mit HTTP-01 für `demo.digitalleute.manuel-fuss.de`; Zertifikatserstellung erst, wenn der öffentliche A-Record auf `91.99.63.199` zeigt.
 - Vor jedem Produktionsreload: `nginx -t`, danach gezielten `systemctl restart notiz-aufgaben` und `systemctl reload nginx` ausführen.
