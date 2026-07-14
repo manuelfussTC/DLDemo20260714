@@ -43,6 +43,12 @@ button { cursor: pointer; }
   justify-content: space-between;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .brand {
   display: flex;
   gap: 10px;
@@ -64,6 +70,19 @@ button { cursor: pointer; }
   font-size: 12px;
 }
 
+.repository-link {
+  color: #65766b;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.repository-link:hover {
+  color: #2f5d43;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .theme-toggle, .export-button {
   border: 1px solid #d2d6c9;
   border-radius: 8px;
@@ -79,6 +98,9 @@ button { cursor: pointer; }
   border-color: #4d5b50;
   background: #222e28;
 }
+
+:root[data-theme="dark"] .repository-link { color: #b1c0b2; }
+:root[data-theme="dark"] .repository-link:hover { color: #d8ead8; }
 
 .hero {
   max-width: 750px;
@@ -358,6 +380,8 @@ blockquote span { display: block; margin-bottom: 3px; color: #829080; font-famil
 @media (max-width: 560px) {
   .topbar { align-items: flex-start; gap: 12px; }
   .brand strong { max-width: 100px; }
+  .topbar-actions { gap: 8px; }
+  .repository-link { font-size: 10px; }
   .theme-toggle { padding: 8px; font-size: 11px; }
   .hero h1 { font-size: 42px; }
   .note-form, .side-panel, .results { padding: 20px; }

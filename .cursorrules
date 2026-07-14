@@ -1,7 +1,20 @@
-# Git- und Secret-Schutz
+# Projektregeln: Notiz → Aufgaben
 
+## Git und Secrets
 - Führe niemals `git push` aus, außer der Nutzer bestätigt den jeweiligen Push ausdrücklich in dieser Unterhaltung.
 - Prüfe vor jedem Commit und Push mit `git status`, dass keine sensiblen Dateien enthalten sind.
 - Niemals API-Keys, Tokens, Passwörter oder lokale `.env`-Dateien lesen, ausgeben, stagen oder committen.
 - Halte `.env*` ignoriert; nur `.env.example` mit leeren Platzhaltern darf versioniert werden.
 - Neue Konfigurationen und externe Integrationen müssen Secrets ausschließlich aus Umgebungsvariablen beziehen.
+
+## Deployment-Infrastruktur
+- Repository: `git@github.com:manuelfussTC/DLDemo20260714.git`
+- Produktionshost: `root@91.99.63.199` (Hetzner, Ubuntu 24.04, Nginx, Node.js 20).
+- Öffentliche Kunden-URL: `https://demo.digitalleute.manuel-fuss.de`.
+- Alle Remote-Schritte müssen als einzelne, nicht-interaktive SSH-One-Shot-Befehle erfolgen.
+- Deployment erfolgt ausschließlich aus einem Git-Checkout; niemals per SCP, rsync oder manuellem Upload.
+- Zielstruktur: Checkout unter `/var/www/notiz-aufgaben`, Server-Env außerhalb des Repositories unter `/etc/notiz-aufgaben.env`, Systemd-Service `notiz-aufgaben.service`, Nginx-Site `/etc/nginx/sites-available/demo.digitalleute.manuel-fuss.de`.
+- Der Node-Prozess bindet nur an `127.0.0.1:3107`; Nginx ist der alleinige öffentliche Einstiegspunkt und proxyed `/` sowie `/api/`.
+- Nginx muss Dotfiles einschließlich `.env` sperren. Die Env-Datei gehört nie in den Deployment-Pfad.
+- TLS erfolgt über Certbot mit HTTP-01 für `demo.digitalleute.manuel-fuss.de`; Zertifikatserstellung erst, wenn der öffentliche A-Record auf `91.99.63.199` zeigt.
+- Vor jedem Produktionsreload: `nginx -t`, danach gezielten `systemctl restart notiz-aufgaben` und `systemctl reload nginx` ausführen.

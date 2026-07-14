@@ -134,13 +134,23 @@ export default function App() {
           <span>n→a</span>
           <strong>Notiz → Aufgaben</strong>
         </a>
-        <button
-          className="theme-toggle"
-          type="button"
-          onClick={() => setSettings((current) => ({ ...current, darkMode: !current.darkMode }))}
-        >
-          {settings.darkMode ? "☀ Heller Modus" : "◐ Dunkler Modus"}
-        </button>
+        <div className="topbar-actions">
+          <a
+            className="repository-link"
+            href="https://github.com/manuelfussTC/DLDemo20260714"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub ↗
+          </a>
+          <button
+            className="theme-toggle"
+            type="button"
+            onClick={() => setSettings((current) => ({ ...current, darkMode: !current.darkMode }))}
+          >
+            {settings.darkMode ? "☀ Heller Modus" : "◐ Dunkler Modus"}
+          </button>
+        </div>
       </header>
 
       <section className="hero">
