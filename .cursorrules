@@ -14,7 +14,8 @@
 - Alle Remote-Schritte müssen als einzelne, nicht-interaktive SSH-One-Shot-Befehle erfolgen.
 - Deployment erfolgt ausschließlich aus einem Git-Checkout; niemals per SCP, rsync oder manuellem Upload.
 - Zielstruktur: Checkout unter `/var/www/notiz-aufgaben`, lokale Server-Env ausschließlich als `/var/www/notiz-aufgaben/.env` mit `chmod 600`, Systemd-Service `notiz-aufgaben.service`, Nginx-Site `/etc/nginx/sites-available/demo.digitaleleute.manuel-fuss.de`.
-- Der Node-Prozess bindet nur an `127.0.0.1:3107`; Nginx ist der alleinige öffentliche Einstiegspunkt und proxyed `/` sowie `/api/`.
+- Der Service läuft als eigener Systembenutzer `notiz-aufgaben`. Der Node-Prozess bindet nur an `127.0.0.1:3107`; Nginx ist der alleinige öffentliche Einstiegspunkt und proxyed `/` sowie `/api/`.
 - Nginx muss Dotfiles einschließlich `.env` sperren. Die Env-Datei wird niemals ausgegeben, geloggt oder versioniert; bei einem ausdrücklich beauftragten Deployment darf sie ausschließlich verschlüsselt per SSH in die gleichnamige Server-`.env` mit Modus `600` übertragen werden.
-- TLS erfolgt über Certbot mit HTTP-01 für `demo.digitaleleute.manuel-fuss.de`; Zertifikatserstellung erst, wenn der öffentliche A-Record auf `91.99.63.199` zeigt.
-- Vor jedem Produktionsreload: `nginx -t`, danach gezielten `systemctl restart notiz-aufgaben` und `systemctl reload nginx` ausführen.
+- TLS erfolgt über Certbot mit HTTP-01 für `demo.digitaleleute.manuel-fuss.de`. Zertifikat und Schlüssel liegen unter `/etc/letsencrypt/live/demo.digitaleleute.manuel-fuss.de/`; die automatische Erneuerung läuft über `certbot.timer`.
+- Ein Deployment führt im Checkout `git pull --ff-only origin main`, `npm ci --ignore-scripts` und `npm run build` als Benutzer `notiz-aufgaben` aus.
+- Vor jedem Produktionsreload: `nginx -t`, danach gezielt `systemctl restart notiz-aufgaben` und `systemctl reload nginx` ausführen.
