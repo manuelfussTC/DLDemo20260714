@@ -14,6 +14,7 @@ const port = Number(process.env.PORT) || 5173;
 const app = express();
 
 app.disable("x-powered-by");
+app.set("trust proxy", "loopback");
 app.use(express.json({ limit: "20kb" }));
 
 app.post("/api/extract", extractRateLimit, async (request, response) => {
