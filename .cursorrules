@@ -15,6 +15,7 @@
 - Deployment erfolgt ausschließlich aus einem Git-Checkout; niemals per SCP, rsync oder manuellem Upload.
 - Zielstruktur: Checkout unter `/var/www/notiz-aufgaben`, lokale Server-Env ausschließlich als `/var/www/notiz-aufgaben/.env` mit `chmod 600`, Systemd-Service `notiz-aufgaben.service`, Nginx-Site `/etc/nginx/sites-available/demo.digitaleleute.manuel-fuss.de`.
 - Der Service läuft als eigener Systembenutzer `notiz-aufgaben`. Der Node-Prozess bindet nur an `127.0.0.1:3107`; Nginx ist der alleinige öffentliche Einstiegspunkt und proxyed `/` sowie `/api/`.
+- Die Produktion nutzt `OPENAI_MODEL=gpt-5.6-luna`; der Responses-Aufruf verwendet mit `reasoning.effort=none` den niedrigsten von Luna unterstützten Aufwand.
 - Nginx muss Dotfiles einschließlich `.env` sperren. Die Env-Datei wird niemals ausgegeben, geloggt oder versioniert; bei einem ausdrücklich beauftragten Deployment darf sie ausschließlich verschlüsselt per SSH in die gleichnamige Server-`.env` mit Modus `600` übertragen werden.
 - TLS erfolgt über Certbot mit HTTP-01 für `demo.digitaleleute.manuel-fuss.de`. Zertifikat und Schlüssel liegen unter `/etc/letsencrypt/live/demo.digitaleleute.manuel-fuss.de/`; die automatische Erneuerung läuft über `certbot.timer`.
 - Ein Deployment führt im Checkout `git pull --ff-only origin main`, `npm ci --ignore-scripts` und `npm run build` als Benutzer `notiz-aufgaben` aus.
