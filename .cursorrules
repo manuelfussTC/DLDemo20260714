@@ -1,0 +1,7 @@
+# Git- und Secret-Schutz
+
+- Führe niemals `git push` aus, außer der Nutzer bestätigt den jeweiligen Push ausdrücklich in dieser Unterhaltung.
+- Prüfe vor jedem Commit und Push mit `git status`, dass keine sensiblen Dateien enthalten sind.
+- Niemals API-Keys, Tokens, Passwörter oder lokale `.env`-Dateien lesen, ausgeben, stagen oder committen.
+- Halte `.env*` ignoriert; nur `.env.example` mit leeren Platzhaltern darf versioniert werden.
+- Neue Konfigurationen und externe Integrationen müssen Secrets ausschließlich aus Umgebungsvariablen beziehen.
