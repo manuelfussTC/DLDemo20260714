@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "tsx server/index.ts",
     "build": "tsc -b && vite build",
-    "start": "NODE_ENV=production tsx server/index.ts"
+    "start": "NODE_ENV=production tsx server/index.ts",
+    "test": "tsx --test tests/unit/*.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed --workers=1"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
@@ -17,6 +20,7 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/express": "latest",
     "@types/node": "latest",
     "@types/react": "latest",

@@ -102,14 +102,28 @@ Response:
       "title": "Angebot schicken",
       "owner": "Lisa",
       "due": "Freitag",
+      "dueAt": "2026-07-17T21:59:59.000Z",
+      "dueStatus": "valid",
+      "dueWarning": "",
       "priority": "unknown",
-      "sourceQuote": "Lisa schickt das Angebot bis Freitag."
+      "sourceQuote": "Lisa schickt das Angebot bis Freitag.",
+      "dependsOn": [],
+      "contextWarning": ""
     }
   ]
 }
 ```
 
-Das Modell wird mit einem strikten JSON-Schema auf dieses Format festgelegt. Die Antwort wird anschließend mit Zod erneut validiert, bevor sie den Browser erreicht.
+Das Modell wird mit einem strikten JSON-Schema auf dieses Format festgelegt. Die Antwort wird anschließend mit Zod validiert, sprachlich bereinigt und mit einem deterministischen Friststatus für `Europe/Berlin` ergänzt, bevor sie den Browser erreicht.
+
+## Tests
+
+```bash
+npm test
+npm run test:e2e
+```
+
+Die Unit-Tests prüfen unter anderem leere und lange Eingaben, Timeouts, ungültige und widersprüchliche Fristen, Abhängigkeiten sowie die erweiterbare Sprachbereinigung. Der E2E-Test verwendet bewusst den realen OpenAI-Endpunkt und benötigt daher `OPENAI_API_KEY`.
 
 ## Sicherheit
 
@@ -121,15 +135,15 @@ Das Modell wird mit einem strikten JSON-Schema auf dieses Format festgelegt. Die
 - Es gibt keine CORS-Freigabe für fremde Domains.
 - Die Notiz wird als untrusted content behandelt: Anweisungen innerhalb der Notiz dürfen die Modellanweisung nicht verändern.
 - Requests an das Modell werden mit `store: false` gesendet.
+- Sichtbare Modelltexte werden anhand einer zentral erweiterbaren Wortliste bereinigt.
+- Relative und absolute Fristen werden serverseitig gegen einen festen Bezugszeitpunkt und `Europe/Berlin` geprüft.
 
 ## Bewusste Grenzen der v0
 
-Dieser Prototyp implementiert den Happy Path. Nicht ausgebaut sind unter anderem:
+Nicht ausgebaut sind unter anderem:
 
-- Sonderfälle für leere oder sehr lange Eingaben
 - Präzise Interpretation unklarer Fristen
 - Vollständige Barrierefreiheit, mobile Optimierung und UI-Feinschliff
-- Automatisierte Tests
 - Deployment, Monitoring, Datenbank und Authentifizierung
 
 ## Git-Konvention

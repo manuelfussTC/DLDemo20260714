@@ -338,6 +338,12 @@ textarea:focus, input:focus, select:focus { border-color: #5d8b68; box-shadow: 0
 .task-meta div { display: grid; gap: 2px; }
 .task-meta dt { color: #8a958c; font-size: 10px; }
 .task-meta dd { margin: 0; color: #46544a; font-size: 12px; font-weight: 600; }
+.due-status { display: block; width: fit-content; margin-top: 4px; border-radius: 12px; padding: 2px 6px; font-size: 9px; }
+.due-status--valid { color: #376a53; background: #e5f1e5; }
+.due-status--overdue, .due-status--invalid { color: #a6332c; background: #f9e4df; }
+.due-status--ambiguous { color: #8a5e1c; background: #f8efd7; }
+.task-dependency { margin: -7px 0 12px; color: #65756a; font-size: 10px; }
+.task-warning { margin: -5px 0 12px; border-radius: 6px; padding: 7px 8px; color: #8b302a; background: #fbece8; font-size: 10px; line-height: 1.4; }
 blockquote { margin: 0; border-left: 2px solid #bbd3b5; padding: 6px 0 6px 10px; color: #5f6b63; font-size: 11px; font-style: italic; line-height: 1.45; }
 blockquote span { display: block; margin-bottom: 3px; color: #829080; font-family: "DM Mono", monospace; font-size: 9px; font-style: normal; text-transform: uppercase; }
 
@@ -360,6 +366,7 @@ blockquote span { display: block; margin-bottom: 3px; color: #829080; font-famil
 :root[data-theme="dark"] .empty-copy,
 :root[data-theme="dark"] .task-owner,
 :root[data-theme="dark"] .task-meta dd,
+:root[data-theme="dark"] .task-dependency,
 :root[data-theme="dark"] blockquote { color: #b9c2b8; }
 :root[data-theme="dark"] .metric-card,
 :root[data-theme="dark"] .task-card,

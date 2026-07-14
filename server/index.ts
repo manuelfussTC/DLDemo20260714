@@ -5,8 +5,13 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { createServer as createViteServer } from "vite";
 import { z } from "zod";
-import { ExtractionError, extractTasks } from "./extractor.js";
+import {
+  ExtractionError,
+  ExtractionTimedOutError,
+  extractTasks,
+} from "./extractor.js";
 import { extractRateLimit } from "./rateLimit.js";
+import { emptyNoteError, hasNoteContent } from "../shared/note.js";
 
 const rootDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const clientDirectory = path.join(rootDirectory, "dist");
@@ -18,10 +23,17 @@ app.set("trust proxy", "loopback");
 app.use(express.json({ limit: "20kb" }));
 
 app.post("/api/extract", extractRateLimit, async (request, response) => {
-  const payload = z.object({ note: z.string() }).safeParse(request.body);
+  const payload = z
+    .object({
+      note: z.string().refine(hasNoteContent, { message: emptyNoteError }),
+    })
+    .safeParse(request.body);
 
   if (!payload.success) {
-    response.status(400).json({ error: "Bitte sende eine Notiz als Text." });
+    const error = payload.error.issues.some((issue) => issue.message === emptyNoteError)
+      ? emptyNoteError
+      : "Bitte sende eine Notiz als Text.";
+    response.status(400).json({ error });
     return;
   }
 
@@ -33,7 +45,7 @@ app.post("/api/extract", extractRateLimit, async (request, response) => {
       error instanceof ExtractionError
         ? error.message
         : "Die Aufgaben konnten gerade nicht extrahiert werden.";
-    response.status(502).json({ error: message });
+    response.status(error instanceof ExtractionTimedOutError ? 504 : 502).json({ error: message });
   }
 });
 

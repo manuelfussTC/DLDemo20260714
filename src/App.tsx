@@ -6,6 +6,8 @@ import { TaskCard } from "./components/TaskCard";
 import { type DueFilter, TaskFilters } from "./components/TaskFilters";
 import { examples } from "./examples";
 import type { Analysis, LocalSettings, Priority, Task } from "./types";
+import { emptyNoteError, hasNoteContent } from "../shared/note";
+import { sanitizeVisibleText } from "../shared/contentPolicy";
 
 const historyKey = "notiz-aufgaben:history";
 const settingsKey = "notiz-aufgaben:settings";
@@ -29,19 +31,46 @@ function createAnalysis(note: string, tasks: Task[]): Analysis {
   return {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
-    note,
-    tasks,
+    note: sanitizeVisibleText(note),
+    tasks: tasks.map(sanitizeTaskForBrowser),
+  };
+}
+
+function sanitizeTaskForBrowser(task: Task): Task {
+  return {
+    ...task,
+    title: sanitizeVisibleText(task.title),
+    owner: sanitizeVisibleText(task.owner),
+    due: sanitizeVisibleText(task.due),
+    dueAt: task.dueAt || "",
+    dueStatus: task.dueStatus || (task.due ? "ambiguous" : "missing"),
+    dueWarning: sanitizeVisibleText(task.dueWarning || ""),
+    sourceQuote: sanitizeVisibleText(task.sourceQuote),
+    dependsOn: Array.isArray(task.dependsOn)
+      ? task.dependsOn.map(sanitizeVisibleText)
+      : [],
+    contextWarning: sanitizeVisibleText(task.contextWarning || ""),
   };
 }
 
 function downloadCsv(tasks: Task[]) {
   const escape = (value: string) => `"${value.replaceAll('"', '""')}"`;
   const rows = [
-    ["Aufgabe", "Verantwortlich", "Frist", "Priorität", "Wörtlicher Beleg"],
+    [
+      "Aufgabe",
+      "Verantwortlich",
+      "Frist",
+      "Friststatus",
+      "Warnung",
+      "Priorität",
+      "Bereinigter Beleg",
+    ],
     ...tasks.map((task) => [
       task.title,
       task.owner,
       task.due,
+      task.dueStatus,
+      task.dueWarning || task.contextWarning,
       task.priority,
       task.sourceQuote,
     ]),
@@ -99,8 +128,14 @@ export default function App() {
 
   async function handleExtract(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsExtracting(true);
     setError("");
+
+    if (!hasNoteContent(note)) {
+      setError(emptyNoteError);
+      return;
+    }
+
+    setIsExtracting(true);
 
     try {
       const result = await extractTasks(note);
@@ -122,8 +157,13 @@ export default function App() {
   }
 
   function loadHistoryItem(analysis: Analysis) {
-    setNote(analysis.note);
-    setActiveAnalysis(analysis);
+    const sanitizedAnalysis = {
+      ...analysis,
+      note: sanitizeVisibleText(analysis.note),
+      tasks: analysis.tasks.map(sanitizeTaskForBrowser),
+    };
+    setNote(sanitizedAnalysis.note);
+    setActiveAnalysis(sanitizedAnalysis);
     setError("");
   }
 
@@ -198,7 +238,10 @@ export default function App() {
               {history.map((analysis) => (
                 <li key={analysis.id}>
                   <button type="button" onClick={() => loadHistoryItem(analysis)}>
-                    <span>{analysis.note.slice(0, 52)}{analysis.note.length > 52 ? "…" : ""}</span>
+                    <span>
+                      {sanitizeVisibleText(analysis.note).slice(0, 52)}
+                      {analysis.note.length > 52 ? "…" : ""}
+                    </span>
                     <small>{analysis.tasks.length} Aufgaben · {new Date(analysis.createdAt).toLocaleDateString("de-DE")}</small>
                   </button>
                 </li>
@@ -228,7 +271,7 @@ export default function App() {
           <>
             <Dashboard
               total={tasks.length}
-              withDueDate={tasks.filter((task) => task.due).length}
+              withDueDate={tasks.filter((task) => task.dueStatus === "valid").length}
               highPriority={tasks.filter((task) => task.priority === "high").length}
             />
             <TaskFilters
@@ -260,7 +303,7 @@ export default function App() {
         ) : (
           <div className="empty-state">
             <span>✦</span>
-            Nach der Extraktion erscheinen hier Aufgaben mit wörtlichen Belegen aus deiner Notiz.
+            Nach der Extraktion erscheinen hier Aufgaben mit bereinigten Belegen aus deiner Notiz.
           </div>
         )}
       </section>

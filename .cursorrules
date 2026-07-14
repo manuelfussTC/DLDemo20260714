@@ -3,6 +3,7 @@
 ## Git und Secrets
 - Führe niemals `git push` aus, außer der Nutzer bestätigt den jeweiligen Push ausdrücklich in dieser Unterhaltung.
 - Prüfe vor jedem Commit und Push mit `git status`, dass keine sensiblen Dateien enthalten sind.
+- Vor jedem Push, der Teil eines Deployments ist, muss die vollständige Testsuite aus `tests/` erfolgreich durchlaufen: zuerst `npm test`, danach `npm run test:e2e`. Ein Push ist ausschließlich erlaubt, wenn beide Befehle mit Exit-Code 0 enden; bei jedem Fehler darf nicht gepusht werden und die Fehlerursache ist zu melden.
 - Niemals API-Keys, Tokens, Passwörter oder lokale `.env`-Dateien lesen, ausgeben, stagen oder committen.
 - Halte `.env*` ignoriert; nur `.env.example` mit leeren Platzhaltern darf versioniert werden.
 - Neue Konfigurationen und externe Integrationen müssen Secrets ausschließlich aus Umgebungsvariablen beziehen.

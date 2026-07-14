@@ -12,7 +12,17 @@ const priorityLabel = {
   unknown: "Unklar",
 };
 
+const dueStatusLabel = {
+  missing: "",
+  valid: "Gültig",
+  overdue: "Überfällig",
+  invalid: "Ungültig",
+  ambiguous: "Mehrdeutig",
+};
+
 export function TaskCard({ task, showSourceQuote }: TaskCardProps) {
+  const warning = task.dueWarning || task.contextWarning;
+
   return (
     <article className="task-card">
       <div className="task-card__heading">
@@ -29,12 +39,29 @@ export function TaskCard({ task, showSourceQuote }: TaskCardProps) {
         </div>
         <div>
           <dt>Frist</dt>
-          <dd>{task.due || "—"}</dd>
+          <dd>
+            {task.due || "—"}
+            {task.dueStatus !== "missing" && (
+              <span className={`due-status due-status--${task.dueStatus}`}>
+                {dueStatusLabel[task.dueStatus]}
+              </span>
+            )}
+          </dd>
         </div>
       </dl>
+      {task.dependsOn.length > 0 && (
+        <p className="task-dependency">
+          Voraussetzung: {task.dependsOn.join(", ")}
+        </p>
+      )}
+      {warning && (
+        <p className="task-warning" role="status">
+          {warning}
+        </p>
+      )}
       {showSourceQuote && (
         <blockquote>
-          <span>Wörtlicher Beleg</span>
+          <span>Bereinigter Beleg</span>
           „{task.sourceQuote}“
         </blockquote>
       )}

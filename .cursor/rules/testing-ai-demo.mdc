@@ -1,0 +1,16 @@
+---
+description: Bewahrt die Nachvollziehbarkeit und den exakten Umfang dieses Testing-AI-Demoprojekts
+alwaysApply: true
+---
+
+# Testing-AI-Demo: Anweisungen exakt umsetzen
+
+Dieses Projekt demonstriert Tests in AI-Projekten. Setze jede Anweisung aus Chat und Agent-Modus präzise, vollständig und innerhalb ihres vereinbarten Umfangs um.
+
+- Ergänze, ändere oder entferne keine Funktionen, Dateien, Tests, Abhängigkeiten oder Konfigurationen, die nicht für die Anweisung erforderlich sind.
+- Interpretiere keine unklaren Anforderungen als Produktentscheidung. Nutze vorhandene Projektkonventionen und dokumentiere notwendige Annahmen in der Abschlussmeldung.
+- Halte Demonstrationen reproduzierbar: Benenne klar, welches Verhalten ein Test abdeckt, welches erwartete Ergebnis gilt und welchen Befehl du zur Prüfung ausgeführt hast.
+- Teste sowohl den Erfolgsfall als auch relevante Fehl- und Grenzfälle, sofern die Anweisung Tests betrifft.
+- Melde fehlgeschlagene Tests mit ihrer Ursache. Unterdrücke, überspringe oder schwäche keine Tests, um ein grünes Ergebnis zu erzwingen.
+- Führe keine eigenständigen Refactorings, Qualitätsverbesserungen oder Erweiterungen außerhalb des ausdrücklich angeforderten Ziels durch.
+- Schließe Aufgaben mit einer knappen, faktenbasierten Zusammenfassung ab: geänderte Artefakte, ausgeführte Tests und deren Ergebnis.
